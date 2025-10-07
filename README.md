@@ -26,7 +26,7 @@ An easy-to-use Python program for downloading high-quality track covers from Sou
 ```bash
     git clone [https://github.com/qwaart/Image-theft-on-Soundcloud.git](https://github.com/qwaart/Image-theft-on-Soundcloud.git)
     cd /Image-theft-on-Soundcloud
-    ```
+```
 
 2.  Install the necessary libraries:
 ```bash
