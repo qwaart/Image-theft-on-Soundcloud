@@ -1,7 +1,6 @@
 name: Завантаження обкладинки SoundCloud (Ручний запуск)
 
-# 1. Подія: Ручний запуск (workflow_dispatch)
-# Це дозволить вам ввести URL прямо в інтерфейсі GitHub Actions.
+# 1. Подія: Ручний запуск з полем введення URL
 on:
   workflow_dispatch:
     inputs:
@@ -26,21 +25,19 @@ jobs:
           python-version: '3.x'
 
       # 3. Встановлення залежностей
-      # Ваша програма потребує модуля 'requests'.
       - name: Install dependencies
         run: pip install requests
 
       # 4. Запуск програми
-      - name: Run Image Downloader
-        # Програма викликається з двома аргументами: URL та назва папки.
-        # ${{ github.event.inputs.track_url }} - це дані, які ви вводите вручну.
-        run: python main.py ${{ github.event.inputs.track_url }} downloaded_images
+      # Запускаємо main.py, передаючи URL як аргумент командного рядка
+      # та 'Soundcloud_Artwork' як аргумент для назви папки, щоб програма знала, куди зберігати
+      run: python main.py ${{ github.event.inputs.track_url }} Soundcloud_Artwork
 
-      # 5. Збереження результату (Artifact)
-      # Цей крок завантажує створену папку на GitHub.
+      # 5. ЗБЕРЕЖЕННЯ РЕЗУЛЬТАТУ (АРТЕФАКТ)
       - name: Upload Downloaded Images as Artifact
         uses: actions/upload-artifact@v4
         with:
           name: soundcloud-images
-          path: downloaded_images/ # Назва папки, вказана у кроці 4
-          if-no-files-found: error # Завершити з помилкою, якщо файл не знайдено
+          # Шлях змінено на Soundcloud_Artwork
+          path: Soundcloud_Artwork/ 
+          if-no-files-found: error
