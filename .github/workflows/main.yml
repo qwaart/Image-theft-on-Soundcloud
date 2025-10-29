@@ -1,0 +1,43 @@
+name: Завантаження обкладинки SoundCloud (Ручний запуск)
+
+# 1. Подія: Ручний запуск з полем введення URL
+on:
+  workflow_dispatch:
+    inputs:
+      track_url:
+        description: 'URL треку або плейлисту SoundCloud'
+        required: true
+        type: string
+
+jobs:
+  run_downloader:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Отримання коду
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # 2. Налаштування Python
+      - name: Set up Python 3.x
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      # 3. Встановлення залежностей
+      - name: Install dependencies
+        run: pip install requests
+
+      # 4. Запуск програми
+      # Запускаємо main.py, передаючи URL як аргумент командного рядка
+      # та 'Soundcloud_Artwork' як аргумент для назви папки, щоб програма знала, куди зберігати
+      run: python main.py ${{ github.event.inputs.track_url }} Soundcloud_Artwork
+
+      # 5. ЗБЕРЕЖЕННЯ РЕЗУЛЬТАТУ (АРТЕФАКТ)
+      - name: Upload Downloaded Images as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: soundcloud-images
+          # Шлях змінено на Soundcloud_Artwork
+          path: Soundcloud_Artwork/ 
+          if-no-files-found: error
