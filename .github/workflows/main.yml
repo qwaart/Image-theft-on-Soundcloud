@@ -1,0 +1,45 @@
+name: test
+
+on:
+  workflow_dispatch:
+    inputs:
+      track_url:
+        description: 'Input pls URL from SoundCloud'
+        required: true
+        type: string
+
+jobs:
+  download-artwork:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repo
+        uses: actions\checkout@v4
+
+      - name: Install python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install requirements
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Install browser (chromium)
+        run: playwright install --with-deps chromium
+
+      - name: Run script
+        env: 
+          TRACK_URL: ${{ inputs.track_url }}
+        run: |
+          echo "Download art from: $TRACK_URL"
+          python main.py <<< "$TRACK_URL"
+
+      - name: Download pic
+        uses: actions/upload-artifact@v4
+        with:
+          name: SoundCloud-Artwork
+          path: SoundCloud-Artwork/*.png
+          retention-days: 7
+          if-no-files-found: warn
