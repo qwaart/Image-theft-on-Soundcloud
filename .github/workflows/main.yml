@@ -1,4 +1,3 @@
-# .github/workflows/test.yml
 name: test
 
 on:
@@ -29,24 +28,22 @@ jobs:
           if [ -f requirements.txt ]; then
             pip install -r requirements.txt
           else
-            echo "requirements.txt не знайдено!"
-            exit 1
+            echo "requirements.txt не знайдено — встановлюємо вручну"
+            pip install playwright requests beautifulsoup4
           fi
 
-      - name: Встановлення браузера
+      - name: Встановлення браузера (Playwright)
         run: |
           python -m playwright install --with-deps chromium
-          echo "Chromium встановлено"
+          echo "Chromium успішно встановлено"
 
-      - name: Показати структуру папок
+      - name: Перевірка структури
         run: |
-          echo "=== Структура репозиторію ==="
+          echo "=== Файли в репозиторії ==="
           ls -la
-          echo "=== Вміст Soundcloud_Artwork (якщо є) ==="
           mkdir -p Soundcloud_Artwork
-          ls -la Soundcloud_Artwork/
 
-      - name: Запуск main.py
+      - name: Запуск скрипта
         env:
           TRACK_URL: ${{ inputs.track_url }}
         run: |
@@ -55,9 +52,8 @@ jobs:
 
       - name: Показати результат
         run: |
-          echo "=== Файли після виконання ==="
+          echo "=== Вміст Soundcloud_Artwork ==="
           ls -la Soundcloud_Artwork/ || echo "Папка порожня"
-          file Soundcloud_Artwork/*.png 2>/dev/null || echo "PNG не знайдено"
 
       - name: Завантажити артефакт
         uses: actions/upload-artifact@v4
